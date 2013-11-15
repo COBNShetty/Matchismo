@@ -40,7 +40,6 @@ int gameScore;
     int choosenButtonIndex = [self.cardButtons indexOfObject:sender];
     gameScore = _game.score;
     [self.game chooseCardAtIndex:choosenButtonIndex];
-    NSLog(@"Game.Score: %d", _game.score);
     [_game setGameStarted:YES];
     [self changeGameActionLabelWithCard:[self.game cardAtIndex:choosenButtonIndex]];
     [self updateUI];
@@ -49,45 +48,38 @@ int gameScore;
 - (void)changeGameActionLabelWithCard:(Card *)card
 {
     int scoreDifference = _game.score - gameScore;
-    if (card.isChosen) {
-        self.gameActionLabel.text = [NSString stringWithFormat:@"%@ was chosen!", card.contents];
-    } else if (!card.isChosen){
-        self.gameActionLabel.text = [NSString stringWithFormat:@"%@ was unchosen!", card.contents];
+    if (scoreDifference == 0) {
+        if (card.isChosen) {
+            self.gameActionLabel.text = [NSString stringWithFormat:@"%@ was chosen!", card.contents];
+        } else if (!card.isChosen){
+            self.gameActionLabel.text = [NSString stringWithFormat:@"%@ was unchosen!", card.contents];
+        }
     }
     
-    NSLog(@"GameScore: %d", gameScore);
-    if (card.otherCards.count == 1) {
-        Card *otherCard = [card.otherCards firstObject];
-        if (scoreDifference > 0) {
+    if (scoreDifference > 0) {
+        if (card.otherCards.count == 1) {
+            Card *otherCard = [card.otherCards firstObject];
             self.gameActionLabel.text = [NSString stringWithFormat:@"%@%@ matched for %d points!", card.contents, otherCard.contents, scoreDifference];
-        } else if (scoreDifference < 0){
-            self.gameActionLabel.text = [NSString stringWithFormat:@"%@%@ didn't match for %d points!", card.contents, otherCard.contents, scoreDifference];
-        } else if (scoreDifference == 0) {
-            if (card.isChosen) {
-                self.gameActionLabel.text = [NSString stringWithFormat:@"%@ was chosen!", card.contents];
-            } else if (!card.isChosen){
-                self.gameActionLabel.text = [NSString stringWithFormat:@"%@ was unchosen!", card.contents];
-            }
-        }
-    }
-    else if (card.otherCards.count == 2) {
-        Card *otherCardOne = card.otherCards[0];
-        Card *otherCardTwo = card.otherCards[1];
-        if (scoreDifference > 0) {
+        } // end of count if
+        else if (card.otherCards.count == 2) {
+            Card *otherCardOne = card.otherCards[0];
+            Card *otherCardTwo = card.otherCards[1];
             self.gameActionLabel.text = [NSString stringWithFormat:@"%@%@%@ matched for %d points!", card.contents, otherCardOne.contents, otherCardTwo.contents, scoreDifference];
-        } else if (scoreDifference < 0){
-            self.gameActionLabel.text = [NSString stringWithFormat:@"%@%@%@ didn't match for %d points!", card.contents, otherCardOne.contents, otherCardTwo.contents, scoreDifference];
-            
-        } else if (scoreDifference == 0){
-            if (card.isChosen) {
-                self.gameActionLabel.text = [NSString stringWithFormat:@"%@ was chosen!", card.contents];
-            } else if (!card.isChosen){
-                self.gameActionLabel.text = [NSString stringWithFormat:@"%@ was unchosen!", card.contents];
             }
         }
-    }
     
-    
+    if (scoreDifference < 0) {
+        if (card.otherCards.count == 1) {
+            Card *otherCard = [card.otherCards firstObject];
+            self.gameActionLabel.text = [NSString stringWithFormat:@"%@%@ didn't match for %d points!", card.contents, otherCard.contents, scoreDifference];
+            }
+        } // end of count if
+        else if (card.otherCards.count == 2) {
+            Card *otherCardOne = card.otherCards[0];
+            Card *otherCardTwo = card.otherCards[1];
+            self.gameActionLabel.text = [NSString stringWithFormat:@"%@%@%@ didn't match for %d points!", card.contents, otherCardOne.contents, otherCardTwo.contents, scoreDifference];
+        }
+        
 }
 
 - (void)updateUI {
